@@ -57,6 +57,45 @@ class SteroReceiver {
             std::cout << "Bass: " << bass << std::endl;
             std::cout << "Signal Strength: " << signal << std::endl;
         }
+        bool validCheck() {
+
+            try {
+
+                if (wattage > 10 || wattage <= 0) {
+                    throw std::string("Wattage cannot exceed 10 or be less than 0");
+                }
+
+                if (frequency > 120) {
+                    throw std::string("Freqency cannot exceed 120");
+                }
+
+                if (signal > 100 || signal <= 0) {
+                    throw std::string("The signal strength cannot exceed 100 or be less than 0");
+                }
+
+                if (volume > 10 || volume <= 0) {
+                    throw std::string("Volume cannot exceed 10 or be less than 0");
+                }
+
+                if (model.empty()) {
+                    throw std::string("Model cannot be empty");
+                }
+                if (serialNumber.empty()) {
+                    throw std::string("Serial number cannot be empty");
+                }
+                if (numChannels <= 0) {
+                    throw std::string("Number of channels must be greater than 0");
+                }
+
+
+            } catch (const std::string& e) {
+                std::cout << e << std::endl;
+                return false;
+            }
+
+            return true;
+
+        }
 };
 
 template <typename T>
@@ -91,37 +130,38 @@ void setStero() {
     float inputFloat;
     bool inputBool;
 
-    input("Who is the manufacturer", inputString);
-    stero->setManufacturer(inputString);
+    do {
+        input("Who is the manufacturer (generic)", inputString);
+        stero->setManufacturer(inputString);
 
-    input("What is the model", inputString);
-    stero->setModel(inputString);
+        input("What is the model (req)", inputString);
+        stero->setModel(inputString);
 
-    input("What is the serial number", inputString);
-    stero->setSerialNumber(inputString);
+        input("What is the serial number (req)", inputString);
+        stero->setSerialNumber(inputString);
 
-    input("Which band (AM/FM)", inputString);
-    stero->setBand(inputString);
+        input("Which band (AM/FM)", inputString);
+        stero->setBand(inputString);
 
-    input("What is the wattage", inputInt);
-    stero->setWattage(inputInt);
+        input("What is the wattage (1-10)", inputInt);
+        stero->setWattage(inputInt);
 
-    input("How many channels", inputInt);
-    stero->setNumChannels(inputInt);
+        input("How many channels (1-inf)", inputInt);
+        stero->setNumChannels(inputInt);
 
 
-    input("What is the volume (0-100)", inputInt);
-    stero->setVolume(inputInt);
+        input("What is the volume (1-10)", inputInt);
+        stero->setVolume(inputInt);
 
-    input("What is the bass level (0-100)", inputInt);
-    stero->setBass(inputInt);
+        input("What is the bass level", inputInt);
+        stero->setBass(inputInt);
 
-    input("What is the signal strength (0-100)", inputInt);
-    stero->setSignal(inputInt);
+        input("What is the signal strength (1-100)", inputInt);
+        stero->setSignal(inputInt);
 
-    input("What is the frequency (MHz)", inputFloat);
-    stero->setFrequency(inputFloat);
-
+        input("What is the frequency (MHz) (-inf-120)", inputFloat);
+        stero->setFrequency(inputFloat);
+    } while (!stero->validCheck());
 
 }
 
@@ -170,7 +210,7 @@ void steroMenu() {
         switch(userValue) {
             case 1:
                 input("Set volume level", userChange);
-                if (userChange > 0 && userChange <= 100) {
+                if (userChange > 0 && userChange <= 10) {
                     stero->setVolume(userChange);
                     std::cout << "Setting volume to " << userChange << std::endl;
                 } else {
